@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stopwatch & Timer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .display {
+      font-size: 3em;
+      margin: 20px 0;
+      padding: 10px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: inline-block;
+      min-width: 220px;
+    }
+    button {
+      margin: 8px;
+      padding: 12px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .section {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <h1>⏱ Stopwatch & ⏲ Timer</h1>
+
+  <!-- Stopwatch Section -->
+  <div class="section">
+    <h2>Stopwatch</h2>
+    <div id="stopwatch" class="display">00:00:00</div><br>
+    <button onclick="startStopwatch()">Start</button>
+    <button onclick="stopStopwatch()">Stop</button>
+    <button onclick="resetStopwatch()">Reset</button>
+  </div>
+
+  <!-- Timer Section -->
+  <div class="section">
+    <h2>Timer</h2>
+    <input type="number" id="minutes" placeholder="Minutes" min="0" style="padding:8px;border-radius:5px;">
+    <input type="number" id="seconds" placeholder="Seconds" min="0" style="padding:8px;border-radius:5px;"><br><br>
+    <div id="timer" class="display">00:00</div><br>
+    <button onclick="startTimer()">Start</button>
+    <button onclick="stopTimer()">Stop</button>
+    <button onclick="resetTimer()">Reset</button>
+  </div>
+
+  <script>
+    // ------------------ Stopwatch ------------------
+    let swInterval, swTime = 0;
+    function updateStopwatch() {
+      let hrs = Math.floor(swTime / 3600);
+      let mins = Math.floor((swTime % 3600) / 60);
+      let secs = swTime % 60;
+      document.getElementById("stopwatch").innerText =
+        String(hrs).padStart(2, "0") + ":" +
+        String(mins).padStart(2, "0") + ":" +
+        String(secs).padStart(2, "0");
+    }
+    function startStopwatch() {
+      if (swInterval) return;
+      swInterval = setInterval(() => {
+        swTime++;
+        updateStopwatch();
+      }, 1000);
+    }
+    function stopStopwatch() {
+      clearInterval(swInterval);
+      swInterval = null;
+    }
+    function resetStopwatch() {
+      stopStopwatch();
+      swTime = 0;
+      updateStopwatch();
+    }
+
+    // ------------------ Timer ------------------
+    let timerInterval, timerTime = 0;
+    function updateTimer() {
+      let mins = Math.floor(timerTime / 60);
+      let secs = timerTime % 60;
+      document.getElementById("timer").innerText =
+        String(mins).padStart(2, "0") + ":" + String(secs).padStart(2, "0");
+      if (timerTime <= 0) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        alert("⏰ Time's up!");
+      }
+    }
+    function startTimer() {
+      if (timerInterval) return;
+      let m = parseInt(document.getElementById("minutes").value) || 0;
+      let s = parseInt(document.getElementById("seconds").value) || 0;
+      if (timerTime <= 0) timerTime = m * 60 + s;
+      if (timerTime > 0) {
+        updateTimer();
+        timerInterval = setInterval(() => {
+          timerTime--;
+          updateTimer();
+        }, 1000);
+      }
+    }
+    function stopTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    function resetTimer() {
+      stopTimer();
+      timerTime = 0;
+      document.getElementById("timer").innerText = "00:00";
+      document.getElementById("minutes").value = "";
+      document.getElementById("seconds").value = "";
+    }
+  </script>
+</body>
+</html>
